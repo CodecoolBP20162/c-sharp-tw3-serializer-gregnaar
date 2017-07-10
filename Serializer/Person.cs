@@ -18,9 +18,11 @@ namespace Serializer
         public string Address { get; set; }
         public string Phone { get; set; }
 
+
         private DateTime CreationDate { get; set; }
         [NonSerialized]
         private int SerialNumber;
+        private static int Count = 0;
 
         public Person() { }
 
@@ -31,7 +33,8 @@ namespace Serializer
             Phone = phone;
 
             CreationDate = DateTime.Now;
-            SerialNumber = 1; //need proper ID
+            SerialNumber = Count;
+            Count++;
         }
 
         public Person(SerializationInfo info, StreamingContext context)
@@ -50,8 +53,9 @@ namespace Serializer
             info.AddValue("CreationDate", CreationDate);
         }
 
-        public void Serialize(string FilePath="Person.dat")
+        public void Serialize(string FilePath="Person0.dat")
         {
+            FilePath = "Person" + this.SerialNumber + ".dat";
             Stream stream = File.Open(FilePath, FileMode.Create);
             BinaryFormatter bf = new BinaryFormatter();
 
@@ -59,7 +63,7 @@ namespace Serializer
             stream.Close();
         }
 
-        public static Person Deserialize(string FilePath = "Person.dat")
+        public static Person Deserialize(string FilePath = "Person0.dat")
         {
             Stream stream = File.Open(FilePath, FileMode.Open);
             BinaryFormatter bf = new BinaryFormatter();
