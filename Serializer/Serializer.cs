@@ -44,7 +44,7 @@ namespace Serializer
             }
                 
 
-            if (!Regex.IsMatch(txtAddress.Text, @"^\d{4}.[a-zA-Z]+$"))
+            if (!Regex.IsMatch(txtAddress.Text, @"^\d{4}.[a-zA-Z\-]+$"))
             {
                 MessageBox.Show("The address is not valid.");
                 return false;
@@ -70,6 +70,73 @@ namespace Serializer
             txtName.Text = person.Name;
             txtAddress.Text = person.Address;
             txtPhone.Text = person.Phone;
+            txtCount.Text = Person.GetCount();
+        }
+
+        public void EmptyPerson()
+        {
+            txtName.Text = "";
+            txtAddress.Text = "";
+            txtPhone.Text = "";
+            txtCount.Text = Person.GetCount();
+
+        }
+
+        private void btnPrevious_Click(object sender, EventArgs e)
+        {
+            if (Person.IsTherePrevious())
+            {
+                Person.DecreaseCount();
+                try
+                {
+                    Person person = Person.Deserialize();
+                    RefreshPerson(person);
+
+                }
+                catch
+                {
+                    EmptyPerson();
+                }
+            }
+            else
+            {
+                MessageBox.Show("No more records");
+            }
+        }
+
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            if (Person.IsThereNext())
+            {
+                Person.IncreaseCount();
+                try
+                {
+                    Person person = Person.Deserialize();
+                    RefreshPerson(person);
+                }
+                catch
+                {
+                    EmptyPerson();
+                }
+            }
+            else
+            {
+                MessageBox.Show("No more records");
+            }
+        }
+
+        private void btnFirst_Click(object sender, EventArgs e)
+        {
+            Person.FirstPerson();
+            Person person = Person.Deserialize();
+            RefreshPerson(person);
+        }
+
+        private void btnLast_Click(object sender, EventArgs e)
+        {
+            Person.LastPerson();
+            Person person = Person.Deserialize();
+            RefreshPerson(person);
         }
     }
 }

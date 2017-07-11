@@ -22,7 +22,7 @@ namespace Serializer
         private DateTime CreationDate { get; set; }
         [NonSerialized]
         private int SerialNumber;
-        private static int Count = 0;
+        private static int Count = 1;
 
         public Person() { }
 
@@ -33,8 +33,8 @@ namespace Serializer
             Phone = phone;
 
             CreationDate = DateTime.Now;
+
             SerialNumber = Count;
-            Count++;
         }
 
         public Person(SerializationInfo info, StreamingContext context)
@@ -53,7 +53,7 @@ namespace Serializer
             info.AddValue("CreationDate", CreationDate);
         }
 
-        public void Serialize(string FilePath="Person0.dat")
+        public void Serialize(string FilePath = "Person1.dat")
         {
             FilePath = "Person" + this.SerialNumber + ".dat";
             Stream stream = File.Open(FilePath, FileMode.Create);
@@ -63,8 +63,9 @@ namespace Serializer
             stream.Close();
         }
 
-        public static Person Deserialize(string FilePath = "Person0.dat")
+        public static Person Deserialize(string FilePath = "Person1.dat")
         {
+            FilePath = "Person" + Count + ".dat";
             Stream stream = File.Open(FilePath, FileMode.Open);
             BinaryFormatter bf = new BinaryFormatter();
 
@@ -72,6 +73,67 @@ namespace Serializer
             stream.Close();
             return person;
         }
+        public static bool IsThereNext()
+        {
+            if (Count + 1 < 100)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
+        public static bool IsTherePrevious()
+        {
+            if (Count - 1 > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
+        public static void IncreaseCount()
+        {
+            Count++;
+        }
+
+        public static void DecreaseCount()
+        {
+            Count--;
+        }
+
+        public static string GetCount()
+        {
+            return Count.ToString();
+        }
+
+        public static void FirstPerson()
+        {
+            Count = 1;
+        }
+
+        public static void LastPerson()
+        {
+            while (IsThereNext())
+            {
+                try
+                {
+                    Count++;
+                    Deserialize();
+                }
+                catch
+                {
+                    Count--;
+                    break;
+                }
+            }
+            
+        }
     }
 }
